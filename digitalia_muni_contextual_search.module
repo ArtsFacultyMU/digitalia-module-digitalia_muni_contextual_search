@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for digitalia_muni_contextual_search module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+function digitalia_muni_contextual_search_form_views_exposed_form_alter(&$form, $form_state, $form_id) { 
+
+  if($form_id == 'views_exposed_form' && $form['#id']== 'views-exposed-form-dk-ff-structured-search-page-page-1'){
+
+    $nid = \Drupal::request()->get('field_descendant_of');
+
+    $help = t("<strong>Help:</strong> When entering keywords from the full text of a document, keep in mind that the database contains multilingual documents.");
+
+    if ($nid) {
+      $node = \Drupal\node\Entity\Node::load($nid);
+      $title = \Drupal::service('computed_titles')->getComputedTitle($node);
+      $a = t('Searching in title ');
+      $b = t('. If you want to search the whole database, use ');
+      $c = t('this form');
+      $form['#prefix'] = '<strong>'.$a.$title.$b.'<a href="advanced-search">'.$c.'</a></strong>.<br>'.$help;
+    } else {
+      $form['#prefix'] = $help;
+    }
+  }
+}
